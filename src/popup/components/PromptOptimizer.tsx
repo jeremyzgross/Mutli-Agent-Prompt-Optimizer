@@ -23,27 +23,22 @@ const orchestrator = new OptimizationOrchestrator()
 
 const purposeLabels: Record<PromptPurpose, string> = {
   article_writing: 'Article Writing',
-  code_generation: 'Code Generation',
-  code_debugging: 'Code Debugging',
-  code_review: 'Code Review',
-  technical_explanation: 'Technical Explanation',
-  data_analysis: 'Data Analysis',
-  api_documentation: 'API Documentation',
+  social_media_post: 'Social Media Post',
   test_case_generation: 'Test Case Generation',
+  api_documentation: 'API Documentation',
+  non_technical_explanation: 'Non-Technical Explanation',
 }
 
 const purposeDescriptions: Record<PromptPurpose, string> = {
   article_writing:
     'Optimize prompts for generating articles, blog posts, or content',
-  code_generation:
-    'Improve prompts for generating code in any programming language',
-  code_debugging: 'Enhance prompts for debugging and fixing code issues',
-  code_review: 'Refine prompts for reviewing and improving code quality',
-  technical_explanation: 'Perfect prompts for explaining technical concepts',
-  data_analysis: 'Optimize prompts for analyzing and interpreting data',
-  api_documentation: 'Improve prompts for documenting APIs and services',
+  social_media_post:
+    'Enhance prompts for creating engaging social media content',
   test_case_generation:
-    'Enhance prompts for generating test cases and scenarios',
+    'Improve prompts for generating comprehensive test cases',
+  api_documentation: 'Optimize prompts for creating clear API documentation',
+  non_technical_explanation:
+    'Perfect prompts for explaining complex topics to non-technical audiences',
 }
 
 const agentDescriptions: Record<AgentType, string> = {
@@ -54,7 +49,7 @@ const agentDescriptions: Record<AgentType, string> = {
 
 export const PromptOptimizer: React.FC = () => {
   const [prompt, setPrompt] = useState('')
-  const [purpose, setPurpose] = useState<PromptPurpose>('code_generation')
+  const [purpose, setPurpose] = useState<PromptPurpose>('article_writing')
   const [result, setResult] = useState<PromptOptimizationResult | null>(null)
   const [showCopySuccess, setShowCopySuccess] = useState(false)
   const [isOptimizing, setIsOptimizing] = useState(false)

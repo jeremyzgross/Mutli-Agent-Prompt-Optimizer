@@ -2,13 +2,10 @@ export type AgentType = 'rewriter' | 'critic' | 'finalizer'
 
 export type PromptPurpose =
   | 'article_writing'
-  | 'code_generation'
-  | 'code_debugging'
-  | 'code_review'
-  | 'technical_explanation'
-  | 'data_analysis'
-  | 'api_documentation'
+  | 'social_media_post'
   | 'test_case_generation'
+  | 'api_documentation'
+  | 'non_technical_explanation'
 
 export interface Agent {
   type: AgentType
