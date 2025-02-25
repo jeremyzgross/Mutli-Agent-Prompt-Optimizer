@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Multi-Agent Prompt Optimizer",
+  "version": "1.0.0",
+  "description": "A Chrome extension for optimizing prompts using multiple AI agents",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://integrate.api.nvidia.com/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}
