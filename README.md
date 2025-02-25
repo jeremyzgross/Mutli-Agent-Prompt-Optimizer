@@ -4,15 +4,12 @@ A Chrome extension that uses multiple AI agents to help optimize and improve you
 
 ## Features
 
-- Three optimization modes:
-  - **Sequential Optimization**: Agents work in sequence to improve the prompt
-  - **Parallel Debate**: Agents propose different versions and vote on the best one
-  - **Critique and Response**: One agent generates while another critiques
-- Configurable number of iterations for tailored optimization
-- Real-time feedback from each agent during the optimization process
-- Beautiful Material-UI interface for a seamless user experience
-- Support for multiple prompt purposes, including article writing, code generation, and more
-- Enhanced error handling and user notifications for better usability
+- **Sequential Optimization**: Agents work in sequence to improve the prompt.
+- Configurable number of iterations for tailored optimization.
+- Real-time feedback from each agent during the optimization process.
+- Beautiful Material-UI interface for a seamless user experience.
+- Support for multiple prompt purposes, including article writing, code generation, and more.
+- Enhanced error handling and user notifications for better usability.
 
 ## Setup
 
@@ -37,31 +34,28 @@ A Chrome extension that uses multiple AI agents to help optimize and improve you
 
 ## Usage
 
-1. Click the extension icon in your Chrome toolbar
-2. Enter your prompt in the text area
-3. Choose an optimization mode:
-   - Sequential: Best for step-by-step refinement
-   - Parallel: Best for exploring multiple approaches
-   - Critique: Best for detailed feedback and improvements
-4. Adjust the number of iterations (more iterations = more refinement)
-5. Click "Optimize Prompt" and wait for the results
-6. Review the optimized prompt and agent feedback
+1. Click the extension icon in your Chrome toolbar.
+2. Enter your prompt in the text area.
+3. The AI agents will work together to improve the prompt, making it clearer and more effective for any LLM.
+4. Adjust the number of iterations (more iterations = more refinement).
+5. Click "Optimize Prompt" and wait for the results.
+6. Review the optimized prompt and agent feedback.
 
 ## Development
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run watch` - Watch for changes and rebuild
+- `npm run dev` - Start development server with hot reload.
+- `npm run build` - Build for production.
+- `npm run watch` - Watch for changes and rebuild.
 
 ## Architecture
 
 The extension uses a multi-agent system where each agent specializes in different aspects of prompt optimization:
 
-- Rewriter Agent: Improves clarity and structure
-- Critic Agent: Analyzes and suggests improvements
-- Finalizer Agent: Integrates feedback and creates the final version
+- Rewriter Agent: Improves clarity and structure.
+- Critic Agent: Analyzes and suggests improvements.
+- Finalizer Agent: Integrates feedback and creates the final version.
 
-The agents can work in different configurations based on the selected mode, allowing for flexible and powerful prompt optimization strategies.
+The agents work together to provide flexible and powerful prompt optimization strategies.
 
 ## Technologies Used
 
