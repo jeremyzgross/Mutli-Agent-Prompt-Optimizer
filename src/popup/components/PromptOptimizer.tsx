@@ -55,16 +55,19 @@ export const PromptOptimizer: React.FC = () => {
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [currentAgent, setCurrentAgent] = useState<AgentType | null>(null)
   const [optimizationStep, setOptimizationStep] = useState(0)
+  const [feedback, setFeedback] = useState('')
+  const [showFeedback, setShowFeedback] = useState(false)
 
   // Load saved state from storage when component mounts
   useEffect(() => {
     chrome.storage.local.get(
-      ['savedPrompt', 'savedPurpose', 'savedResult'],
+      ['savedPrompt', 'savedPurpose', 'savedResult', 'savedFeedback'],
       (result) => {
         if (result.savedPrompt) setPrompt(result.savedPrompt)
         if (result.savedPurpose)
           setPurpose(result.savedPurpose as PromptPurpose)
         if (result.savedResult) setResult(JSON.parse(result.savedResult))
+        if (result.savedFeedback) setFeedback(result.savedFeedback)
       }
     )
   }, [])
@@ -84,11 +87,16 @@ export const PromptOptimizer: React.FC = () => {
     }
   }, [result])
 
+  useEffect(() => {
+    chrome.storage.local.set({ savedFeedback: feedback })
+  }, [feedback])
+
   const handleOptimize = async () => {
     if (!prompt) return
     setIsOptimizing(true)
     setResult(null)
     setOptimizationStep(0)
+    setShowFeedback(false)
 
     const agents: AgentType[] = ['rewriter', 'critic', 'finalizer']
     try {
@@ -115,6 +123,63 @@ export const PromptOptimizer: React.FC = () => {
     }
   }
 
+  const handleRegenerateWithFeedback = async () => {
+    if (!prompt || !feedback || !result) return
+    setIsOptimizing(true)
+    setOptimizationStep(0)
+
+    try {
+      // Create a combined prompt with the original, the current optimized version, and user feedback
+      const feedbackPrompt = `
+Original prompt: ${prompt}
+
+Current optimized version: ${result.optimizedPrompt}
+
+User feedback: ${feedback}
+
+Please create an improved version based on this feedback.`
+
+      const optimizationResult = await orchestrator.optimizePrompt(
+        feedbackPrompt,
+        {
+          mode: 'sequential',
+          selectedAgents: ['finalizer'], // Just use the finalizer for feedback-based regeneration
+          maxIterations: 1,
+          temperature: 0.7,
+          purpose,
+        },
+        (agent: AgentType) => {
+          setCurrentAgent(agent)
+          setOptimizationStep((prev) => prev + 1)
+        }
+      )
+
+      // Update the result with the new optimized prompt but keep the original feedback
+      setResult({
+        ...result,
+        optimizedPrompt: optimizationResult.optimizedPrompt,
+        agentFeedback: [
+          ...result.agentFeedback,
+          {
+            agentType: 'finalizer',
+            feedback: `Regenerated based on user feedback: ${feedback}`,
+            suggestion: optimizationResult.optimizedPrompt,
+            timestamp: Date.now(),
+          },
+        ],
+      })
+
+      // Clear the feedback field after using it
+      setFeedback('')
+      setShowFeedback(false)
+    } catch (error) {
+      console.error('Regeneration error:', error)
+    } finally {
+      setIsOptimizing(false)
+      setCurrentAgent(null)
+    }
+  }
+
   const handleCopyToClipboard = async () => {
     if (result?.optimizedPrompt) {
       await navigator.clipboard.writeText(result.optimizedPrompt)
@@ -125,7 +190,14 @@ export const PromptOptimizer: React.FC = () => {
   const handleClearAll = () => {
     setPrompt('')
     setResult(null)
-    chrome.storage.local.remove(['savedPrompt', 'savedPurpose', 'savedResult'])
+    setFeedback('')
+    setShowFeedback(false)
+    chrome.storage.local.remove([
+      'savedPrompt',
+      'savedPurpose',
+      'savedResult',
+      'savedFeedback',
+    ])
   }
 
   const getProgressMessage = () => {
@@ -233,12 +305,46 @@ export const PromptOptimizer: React.FC = () => {
             sx={{ mb: 2 }}
           />
 
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             This optimized version is tailored for{' '}
             {purposeLabels[purpose].toLowerCase()} while maintaining your
             original intent. You can now use this improved prompt with any LLM
             of your choice.
           </Typography>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => setShowFeedback(!showFeedback)}
+              startIcon={showFeedback ? null : <span>+</span>}>
+              {showFeedback ? 'Hide Feedback' : 'Provide Feedback & Regenerate'}
+            </Button>
+          </Box>
+
+          {showFeedback && (
+            <Box sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                variant="outlined"
+                label="What would you like to improve about this prompt?"
+                placeholder="e.g., 'Make it more conversational', 'Add more specific examples', 'Focus more on the technical aspects'"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={handleRegenerateWithFeedback}
+                disabled={!feedback || isOptimizing}>
+                Regenerate with Feedback
+              </Button>
+            </Box>
+          )}
         </Paper>
       )}
 
