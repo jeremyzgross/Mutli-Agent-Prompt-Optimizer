@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Box,
   TextField,
@@ -56,6 +56,34 @@ export const PromptOptimizer: React.FC = () => {
   const [currentAgent, setCurrentAgent] = useState<AgentType | null>(null)
   const [optimizationStep, setOptimizationStep] = useState(0)
 
+  // Load saved state from storage when component mounts
+  useEffect(() => {
+    chrome.storage.local.get(
+      ['savedPrompt', 'savedPurpose', 'savedResult'],
+      (result) => {
+        if (result.savedPrompt) setPrompt(result.savedPrompt)
+        if (result.savedPurpose)
+          setPurpose(result.savedPurpose as PromptPurpose)
+        if (result.savedResult) setResult(JSON.parse(result.savedResult))
+      }
+    )
+  }, [])
+
+  // Save state to storage whenever it changes
+  useEffect(() => {
+    chrome.storage.local.set({ savedPrompt: prompt })
+  }, [prompt])
+
+  useEffect(() => {
+    chrome.storage.local.set({ savedPurpose: purpose })
+  }, [purpose])
+
+  useEffect(() => {
+    if (result) {
+      chrome.storage.local.set({ savedResult: JSON.stringify(result) })
+    }
+  }, [result])
+
   const handleOptimize = async () => {
     if (!prompt) return
     setIsOptimizing(true)
@@ -92,6 +120,12 @@ export const PromptOptimizer: React.FC = () => {
       await navigator.clipboard.writeText(result.optimizedPrompt)
       setShowCopySuccess(true)
     }
+  }
+
+  const handleClearAll = () => {
+    setPrompt('')
+    setResult(null)
+    chrome.storage.local.remove(['savedPrompt', 'savedPurpose', 'savedResult'])
   }
 
   const getProgressMessage = () => {
@@ -174,8 +208,16 @@ export const PromptOptimizer: React.FC = () => {
               variant="outlined"
               color="primary"
               onClick={handleCopyToClipboard}
-              size="small">
+              size="small"
+              sx={{ mr: 1 }}>
               Copy to Clipboard
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleClearAll}
+              size="small">
+              Clear All
             </Button>
           </Box>
 
