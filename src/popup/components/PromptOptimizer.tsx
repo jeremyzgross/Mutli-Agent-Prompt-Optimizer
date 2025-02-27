@@ -33,7 +33,7 @@ export const PromptOptimizer: React.FC = () => {
   } = useOptimization()
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, position: 'relative' }}>
       <Typography variant="h5" gutterBottom>
         Prompt Optimizer
       </Typography>
