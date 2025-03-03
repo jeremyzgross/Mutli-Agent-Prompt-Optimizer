@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   TextField,
   FormControl,
@@ -7,6 +7,7 @@ import {
   MenuItem,
   Typography,
   SelectChangeEvent,
+  Menu,
 } from '@mui/material'
 import { PromptPurpose } from '../../../types/agents'
 
@@ -27,9 +28,23 @@ export const PromptInput: React.FC<PromptInputProps> = ({
   onPromptChange,
   onPurposeChange,
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const handlePurposeChange = (event: SelectChangeEvent) => {
     onPurposeChange(event.target.value as PromptPurpose)
+    setMenuOpen(false) // Close menu on selection
   }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setMenuOpen(false) // Close menu on scroll
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
     <>
@@ -38,7 +53,21 @@ export const PromptInput: React.FC<PromptInputProps> = ({
         <Select
           value={purpose}
           label="Optimization Goal"
-          onChange={handlePurposeChange}>
+          onChange={handlePurposeChange}
+          open={menuOpen}
+          onOpen={() => setMenuOpen(true)}
+          onClose={() => setMenuOpen(false)}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            disableScrollLock: true,
+          }}>
           {Object.entries(purposeLabels).map(([value, label]) => (
             <MenuItem key={value} value={value}>
               {label}
