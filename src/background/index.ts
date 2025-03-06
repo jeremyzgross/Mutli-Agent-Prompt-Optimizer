@@ -1,3 +1,20 @@
+// Background script for the Prompt Optimizer extension
+console.log('Prompt Optimizer background script loaded')
+
+// Listen for installation
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    console.log('Extension installed')
+
+    // Initialize storage with default values
+    chrome.storage.local.set({
+      darkMode: false,
+      promptsUsed: 0,
+    })
+  }
+})
+
+// Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'OPTIMIZE_PROMPT') {
     // Get API key from storage

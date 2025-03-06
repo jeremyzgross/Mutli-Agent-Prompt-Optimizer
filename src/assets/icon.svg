@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#4285f4"/>
+  
+  <!-- Chat bubble -->
+  <path d="M40 45h48c2.2 0 4 1.8 4 4v24c0 2.2-1.8 4-4 4H68l-12 12-12-12H40c-2.2 0-4-1.8-4-4V49c0-2.2 1.8-4 4-4z" 
+        fill="white"/>
+  
+  <!-- Magic wand -->
+  <path d="M75 55l8-8 8 8-8 8-8-8zM65 65l-16 16M82 62l-4 4" 
+        stroke="white" 
+        stroke-width="4" 
+        stroke-linecap="round"/>
+</svg> 

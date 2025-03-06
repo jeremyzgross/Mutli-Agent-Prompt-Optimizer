@@ -17,6 +17,8 @@
 *.swp
 *.swo
 
+# Firebase config
+src/firebase/firebaseConfig.ts
 # OS files
 .DS_Store
 Thumbs.db
@@ -31,3 +33,4 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache 
+

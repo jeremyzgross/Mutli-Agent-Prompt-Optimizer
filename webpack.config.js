@@ -7,12 +7,12 @@ const dotenv = require('dotenv')
 const env = dotenv.config().parsed || {}
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   devtool: 'source-map',
   entry: {
-    popup: './src/popup/index.tsx',
-    background: './src/background/index.ts',
-    options: './src/options/index.ts',
+    popup: path.resolve(__dirname, 'src/popup/index.tsx'),
+    options: path.resolve(__dirname, 'src/options/index.ts'),
+    background: path.resolve(__dirname, 'src/background/index.ts'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -21,9 +21,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|tsx)$/,
+        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
@@ -32,7 +36,12 @@ module.exports = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: 'public' }],
+      patterns: [
+        { from: 'src/manifest.json', to: 'manifest.json' },
+        { from: 'src/popup/index.html', to: 'popup.html' },
+        { from: 'src/options/index.html', to: 'options.html' },
+        { from: 'src/assets', to: 'assets', noErrorOnMissing: true },
+      ],
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify({

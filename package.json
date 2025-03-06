@@ -3,16 +3,20 @@
   "version": "1.0.0",
   "description": "A Chrome extension for multi-agent prompt optimization",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "node scripts/generate-icons.js && webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --watch",
-    "dev": "webpack serve --config webpack.config.js"
+    "dev": "webpack serve --config webpack.config.js",
+    "generate-icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@firebase/auth": "^1.9.1",
+    "@firebase/firestore": "^4.7.9",
     "@mui/icons-material": "^5.13.0",
     "@mui/material": "^5.13.0",
     "dotenv": "^16.4.7",
+    "firebase": "^11.4.0",
     "openai": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -24,7 +28,10 @@
     "@types/react-dom": "^18.2.0",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^7.1.2",
     "process": "^0.11.10",
+    "sharp": "^0.33.5",
+    "style-loader": "^4.0.0",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.4",
     "webpack": "^5.82.1",
