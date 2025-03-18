@@ -77,8 +77,14 @@ export class OptimizationOrchestrator {
     feedback: AgentFeedback[],
     onProgress?: (agent: AgentType) => void
   ): Promise<string> {
+    // Run all agents in parallel except finalizer
+    const nonFinalizerAgents = config.selectedAgents.filter(
+      (agent) => agent !== 'finalizer'
+    )
+    const finalizerAgent = config.selectedAgents.includes('finalizer')
+
     const parallelResults = await Promise.all(
-      config.selectedAgents.map(async (agentType) => {
+      nonFinalizerAgents.map(async (agentType) => {
         const agent = this.agents.get(agentType)
         if (!agent) return prompt
 
@@ -94,15 +100,31 @@ export class OptimizationOrchestrator {
       })
     )
 
-    // Use the finalizer to combine parallel results
+    // If no finalizer is needed, return the best result
+    if (!finalizerAgent) {
+      return parallelResults[0] || prompt
+    }
+
+    // Use the finalizer to combine parallel results if needed
     const finalizer = this.agents.get('finalizer')
     if (!finalizer) return parallelResults[0] || prompt
 
     onProgress?.('finalizer')
     const combinedResult = await finalizer.process(
-      JSON.stringify({ original: prompt, variations: parallelResults }),
+      JSON.stringify({
+        original: prompt,
+        variations: parallelResults.filter((result) => result !== prompt),
+      }),
       config.purpose
     )
+
+    feedback.push({
+      agentType: 'finalizer',
+      feedback: 'Combined parallel optimizations',
+      suggestion: combinedResult,
+      timestamp: Date.now(),
+    })
+
     return combinedResult
   }
 

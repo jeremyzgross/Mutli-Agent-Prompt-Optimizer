@@ -61,15 +61,25 @@ export const useOptimization = (
     setOptimizationStep(0)
     setShowFeedback(false)
 
-    const agents: AgentType[] = ['rewriter', 'critic', 'finalizer']
+    // Select agents based on purpose
+    let agents: AgentType[] = ['rewriter']
+    if (purpose === 'test_case_generation' || purpose === 'api_documentation') {
+      agents = ['rewriter', 'critic', 'finalizer']
+    } else if (
+      purpose === 'article_writing' ||
+      purpose === 'social_media_post'
+    ) {
+      agents = ['rewriter', 'finalizer']
+    }
+
     try {
       const optimizationResult = await orchestrator.optimizePrompt(
         prompt,
         {
-          mode: 'sequential',
+          mode: 'parallel',
           selectedAgents: agents,
           maxIterations: 1,
-          temperature: 0.7,
+          temperature: 0.5, // Lower temperature for faster, more consistent results
           purpose,
         },
         (agent: AgentType) => {
